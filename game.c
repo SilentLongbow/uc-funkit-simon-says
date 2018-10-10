@@ -12,8 +12,10 @@
 #include "navswitch.h"
 #include "tinygl.h"
 #include "ir_uart.h"
+#include "../fonts/font5x7_1.h"
 
 #define PACER_RATE 500
+#define MESSAGE_RATE 10
 
 /** Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] = {
@@ -32,19 +34,21 @@ static const pio_t cols[] = {
 /** Initialise all of the required drivers */
 void system_initialise(void)
 {
-    // general system initialiser
-    system_init();
+    system_init();  // general system initialiser
 
-    // navigational switch initialiser
-    navswitch_init();
+    navswitch_init();   // navigational switch initialiser
 
-    //timer initialiser
-    pacer_init(PACER_RATE);
+    pacer_init(PACER_RATE); //timer initialiser
 
+    ir_uart_init(); //IR initialiser
 
-    //IR initialiser
-    ir_uart_init();
+    led_init ();    //LED initialiser
 
+    // Initialise the tinygl system
+    tinygl_init (PACER_RATE);
+    tinygl_font_set (&font5x7_1);
+    tinygl_text_speed_set (MESSAGE_RATE);
+    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
 
     //LED matrix initialiser
     int i;
@@ -54,13 +58,14 @@ void system_initialise(void)
     for (i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
+}
 
-
-    //LED initialiser (might be useful)
-    led_init ();
-
-
-
+void display_character (char character)
+{
+    char buffer[2];
+    buffer[0] = character;
+    buffer[1] = '\0';
+    tinygl_text (buffer);
 }
 
 /*dicide which player send message first*/
@@ -71,13 +76,13 @@ int decide_first_player(void)
 * */
 
 /** Turns on the blue LED when called */
-void blue_led_on()
+void blue_led_on(void)
 {
     led_set(LED1, 1);
 }
 
 /** Turns off the blue LED when called */
-void  blue_led_off()
+void  blue_led_off(void)
 {
     led_set(LED1, 0);
 }
@@ -85,8 +90,12 @@ void  blue_led_off()
 // play the game
 int main (void)
 {
+    char character = 'A';
     system_initialise();    // Turn on the blue LED
     blue_led_on();
+    tinygl_text("Let's start this assignment!");
     while (1) {
+        pacer_wait();
+        tinygl_update();
     }
 }
