@@ -1,6 +1,10 @@
 /* Author: Siyuan WEI(ID:22883373)
  *         Matthew Kenny(ID:)
+<<<<<<< HEAD
  *
+=======
+ *
+>>>>>>> ac5f6eeb8cfa2df4d454d127fccf6a3f0b765ddb
  * describle: main file that run the game
  */
 
@@ -37,15 +41,12 @@ void system_initialise(void)
     //trying to figure it out
 
 
-
     //LED1 init(might be useful)
     led_init ();
     led_set(LED1, 0);
 
 
 }
-
-
 
 /*dicide which player send message first*/
 int decide_first_player(void)
