@@ -6,7 +6,7 @@
 
 
 #include "system.h"
-#include "pio.h"
+#include "displayMessage.h"
 #include "pacer.h"
 #include "led.h"
 #include "navswitch.h"
@@ -51,13 +51,7 @@ void system_initialise(void)
     tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
 
     //LED matrix initialiser
-    int i;
-    for (i = 0; i < 7; i++) {
-        pio_config_set(rows[i], PIO_OUTPUT_HIGH);
-    }
-    for (i = 0; i < 5; i++) {
-        pio_config_set(cols[i], PIO_OUTPUT_HIGH);
-    }
+    message_display_init(rows, cols);
 }
 
 void display_character (char character)
@@ -90,12 +84,13 @@ void  blue_led_off(void)
 // play the game
 int main (void)
 {
-    char character = 'A';
-    system_initialise();    // Turn on the blue LED
-    blue_led_on();
-    tinygl_text("Let's start this assignment!");
+    system_initialise();
+    blue_led_on();    // Turn on the blue LED
+    tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
+    display_character('y');
     while (1) {
         pacer_wait();
+        blue_led_on();
         tinygl_update();
     }
 }
