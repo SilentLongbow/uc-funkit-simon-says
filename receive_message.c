@@ -1,5 +1,4 @@
 /* Author: Siyuan WEI(ID: 022883373)
- *         Matthew Kenny(ID: 11031880)
  * Description: receive and check message, called by game.c
  */
 
@@ -121,13 +120,13 @@ char receive_message(int message_length)
             flag1 = 1;
         }
     }
-    
+
     return is_success;
 }
 
 
 
-    
-    
-    
+
+
+
 

@@ -1,5 +1,4 @@
 /* Author: Siyuan WEI(ID: 022883373)
- *         Matthew Kenny(ID: 11031880)
  * Description: set message, called by game.c
  */
 
@@ -68,6 +67,6 @@ char send_message(int message_length)
 
 }
 
-    
-    
+
+
 
