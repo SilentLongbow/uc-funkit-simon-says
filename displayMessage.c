@@ -1,23 +1,83 @@
+/* Author: Matthew Kenny(ID: 11031880)
+ *
+ * Description: Handles all actions regarding displaying messages
+ *              to the LED matrix.
+ */
+
+#include <string.h>
 #include "system.h"
 #include "pio.h"
 #include "tinygl.h"
 #include "pacer.h"
 #include "../fonts/font5x7_1.h"
 
-void display_scrolling_message(void)
-{
-    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
-    while (1) {
-        pacer_wait();
-        tinygl_update();
-    }
+#define PACER_RATE 500
+#define MESSAGE_RATE 10
 
+
+static const uint8_t up_arrow[] = {
+    0x04, 0x02, 0xff, 0x02, 0x04
+};
+
+static const uint8_t down_arrow[] = {
+    0x10, 0x20, 0xff, 0x20, 0x10
+};
+
+static const uint8_t left_arrow[] = {
+    0x08, 0x1c,0x2a,0x08, 0x08
+};
+
+static const uint8_t right_arrow[]= {
+    0x08, 0x08, 0x2a, 0x1c, 0x08
+};
+
+/** Compares the message and the buffer and returns the length of the shorter two */
+int evaluate_lengths(char message[], char buffer[])
+{
+    int buffer_length = strlen(buffer);
+    int message_length = strlen(message);
+    if (buffer_length <= message_length) {
+        return buffer_length;
+    } else {
+        return message_length;
+    }
 }
 
-void display_char(char character[])
+/** Displays a single message of at most 10 characters, once */
+void display_scrolling_message(char message[])
 {
+    int counter = 0;
+    char buffer[11] = "0";
+    //strncpy(message, buffer, 10);
+    buffer[10] = '\0';
+    //int display_length = evaluate_lengths(message, buffer) + 2;
+
+    //double duration = (1 / (MESSAGE_RATE / 10.0)) * display_length;   // Get how many seconds are needed to display message
+    //int tick_target = duration / (1 / (double) PACER_RATE);    // Divide duration by pacer period to get ticks
+    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
+    tinygl_text("Hello");
+    while (counter <= 5000) {
+        pacer_wait();
+        tinygl_update();
+        counter++;
+    }
+    tinygl_clear();
+}
+
+/** Displays a given character for 3 seconds */
+void display_character(const char character)
+{
+    int char_tick = 0;
+    char buffer[2] = {character, '\0'};
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
-    
+    tinygl_text(buffer);
+    while (char_tick < 1500) { // Display character for 3 seconds
+        pacer_wait();
+        tinygl_update();
+        char_tick++;
+    }
+    tinygl_clear();
+}
 
 void message_display_init(const pio_t rows[], const pio_t cols[])
 {
@@ -30,5 +90,3 @@ void message_display_init(const pio_t rows[], const pio_t cols[])
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
 }
-
-void text_display_setup

@@ -11,9 +11,19 @@
 #include "system.h"
 #include "pio.h"
 
+static const uint8_t up_arrow[];
+
+static const uint8_t down_arrow[];
+
+static const uint8_t left_arrow[];
+
+static const uint8_t right_arrow[];
 
 /** Displays a scrolling message on the display */
-void display_scrolling_message(void);
+void display_scrolling_message(char message[]);
+
+/** Displays a single character on the display */
+void display_character(const char character);
 
 /** Initialises every column and row of the LED matrix */
 void message_display_init(const pio_t rows[], const pio_t cols[]);
