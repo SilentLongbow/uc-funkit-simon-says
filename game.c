@@ -34,6 +34,7 @@ static const pio_t cols[] = {
 /** Initialise all of the required drivers */
 void system_initialise(void)
 {
+
     system_init();  // general system initialiser
 
     navswitch_init();   // navigational switch initialiser
@@ -41,8 +42,6 @@ void system_initialise(void)
     pacer_init(PACER_RATE); //timer initialiser
 
     ir_uart_init(); //IR initialiser
-
-    led_init ();    //LED initialiser
 
     // Initialise the tinygl system
     tinygl_init (PACER_RATE);
@@ -52,14 +51,8 @@ void system_initialise(void)
 
     //LED matrix initialiser
     message_display_init(rows, cols);
-}
 
-void display_character (char character)
-{
-    char buffer[2];
-    buffer[0] = character;
-    buffer[1] = '\0';
-    tinygl_text (buffer);
+    led_init ();    //LED initialiser
 }
 
 /*dicide which player send message first*/
@@ -85,12 +78,11 @@ void  blue_led_off(void)
 int main (void)
 {
     system_initialise();
-    blue_led_on();    // Turn on the blue LED
-    tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
-    display_character('y');
+    //display_character('y');
+    display_scrolling_message("Hi");
+    blue_led_off();
     while (1) {
-        pacer_wait();
-        blue_led_on();
         tinygl_update();
     }
+    return 1;
 }
