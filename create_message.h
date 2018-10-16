@@ -10,9 +10,6 @@
 #include "system.h"
 
 /** Message creation at the start of a round, returns the message */
-char* create_initial_message(char message[]);
-
-/** Response message creation on the receiver's side */
-char* create_response_message(char message[]);
+void create_message(char message[]);
 
 #endif
