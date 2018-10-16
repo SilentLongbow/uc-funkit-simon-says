@@ -17,7 +17,7 @@
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
 #define DISPLAY_COUNT 6000
-#define MAX_FAil 3
+#define MAX_FAIL_TIMES 3
 
 /** Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] = {
@@ -102,16 +102,23 @@ int start_screen(void)
 }
 
 
-/*
+// display result of the game;
 void finish_screen(my_fail, opponent_fail)
 {
-    if (my_fail == MAX_FAil) {
-        MAX_FAil 
+    if (my_fail == MAX_FAIL_TIMES) {
+        tinygl_text(" YOU LOST   \0") 
     }
-
+    if (opponent_fail == MAX_FAIL_TIMES) {
+        tinygl_text(" YOU WON   \0")
+    }
+    //DISPLAY FINISH MESSGAE
+    while (1)
+    {
+        pacer_wait();
+        tinygl_update();
+    }
 }
- 
- */
+
 
 
 /** Turns on the blue LED when called */
