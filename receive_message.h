@@ -12,7 +12,8 @@
 
 
 
-char receive_message(int message_length);
+void receive_message(char message[7]);
 
+int wait_for_other(void);
 
 #endif
