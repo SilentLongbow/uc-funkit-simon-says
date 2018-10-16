@@ -10,6 +10,7 @@
 #include "tinygl.h"
 #include "pacer.h"
 #include "../fonts/font5x7_1.h"
+#include "led.h"
 
 #define PACER_RATE 1000
 #define MESSAGE_RATE 15
@@ -102,7 +103,6 @@ void display_arrow_still(const char direction)
 {
     int counter = 0;
     Arrow arrow = parse_arrow(direction);
-    led_set(LED1, 1);
     while (counter < (1 *PACER_RATE)) { // Display for 1 second
         pacer_wait();
         tinygl_draw_line (tinygl_point (arrow.top[0] - 5, arrow.top[1]), tinygl_point (arrow.bottom[0] - 5, arrow.bottom[1]), 1);
@@ -111,7 +111,6 @@ void display_arrow_still(const char direction)
         tinygl_update();
         counter++;
     }
-    led_set(LED1, 0);
     tinygl_clear();
     tinygl_update();
 }
@@ -141,7 +140,7 @@ void display_character(const char character)
     char buffer[2] = {character, '\0'};
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
     tinygl_text(buffer);
-    while (char_tick < PACER_RATE) { // Display character for 3 seconds
+    while (char_tick < PACER_RATE) { // Display character for 1 seconds
         pacer_wait();
         tinygl_update();
         char_tick++;
