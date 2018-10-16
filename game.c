@@ -7,15 +7,17 @@
 #include <stdio.h>
 #include "system.h"
 #include "displayMessage.h"
+#include "create_message.h"
 #include "pacer.h"
 #include "led.h"
 #include "navswitch.h"
 #include "tinygl.h"
 #include "ir_uart.h"
+#include <stdbool.h>
 #include "../fonts/font5x7_1.h"
 
-#define PACER_RATE 500
-#define MESSAGE_RATE 10
+#define PACER_RATE 1000
+#define MESSAGE_RATE 15
 #define DISPLAY_COUNT 6000
 #define MAX_FAIL_TIMES 3
 
@@ -49,7 +51,6 @@ void system_initialise(void)
     tinygl_init (PACER_RATE);
     tinygl_font_set (&font5x7_1);
     tinygl_text_speed_set (MESSAGE_RATE);
-    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
 
     //LED matrix initialiser
     message_display_init(rows, cols);
@@ -69,20 +70,20 @@ int start_screen(void)
     // keep display message before push nav_switch
     while(player_mode == 0) {
         //led_set(LED1, 1);
-        
+
         if (counter >= DISPLAY_COUNT) {
-            
+
             if (text_state == 0) {
                 tinygl_text("    CHOOSE START MODE   \0");
             }
             if (text_state == 1) {
                 tinygl_text(" N FOR SEND S FOR RECIEVE  \0");
             }
-            
+
             text_state = !text_state;
             counter = 0;
         }
-        
+
         pacer_wait();
         navswitch_update();
         tinygl_update();
@@ -95,7 +96,7 @@ int start_screen(void)
             player_mode = 2;
         }
     }
-    
+
     tinygl_clear();
     tinygl_update();
     return player_mode;
@@ -103,13 +104,13 @@ int start_screen(void)
 
 
 // display result of the game;
-void finish_screen(my_fail, opponent_fail)
+void finish_screen(bool my_fail, bool opponent_fail)
 {
     if (my_fail == MAX_FAIL_TIMES) {
-        tinygl_text(" YOU LOST   \0") 
+        tinygl_text(" YOU LOST   \0");
     }
     if (opponent_fail == MAX_FAIL_TIMES) {
-        tinygl_text(" YOU WON   \0")
+        tinygl_text(" YOU WON   \0");
     }
     //DISPLAY FINISH MESSGAE
     while (1)
@@ -133,21 +134,28 @@ void  blue_led_off(void)
     led_set(LED1, 0);
 }
 
-
-
-
-
-
 // play the game
-
 int main (void)
 {
     system_initialise();
-    blue_led_off();
-    display_character('X');
+    blue_led_on();
+    //display_character('X');
+    //display_scrolling_message("MATTHEW");
+    char message[7];
+    create_initial_message(message);
+    int i = 0;
+    for (i; i < 6; i++) {
+        display_arrow_scrolling(message[i]);
+    }
+    //display_arrow_still('S');
+
+    //tinygl_draw_line(tinygl_point (2, 0), tinygl_point(2, 6), 1);
+    //display_arrow_scrolling('N');
+    //display_arrow_scrolling('E');
+    //display_arrow_scrolling('S');
+    //display_arrow_scrolling('W');
     while (1) {
-        pacer_wait ();
-        tinygl_update();
+        pacer_wait();
     }
     return 1;
 }
