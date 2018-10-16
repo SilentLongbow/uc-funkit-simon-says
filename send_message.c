@@ -1,4 +1,5 @@
 /* Author: Siyuan WEI(ID: 022883373)
+ *         Matthew Kenny (ID: 11031880)
  * Description: set message, called by game.c
  */
 
@@ -8,62 +9,26 @@
 #include "pacer.h"
 #include "led.h"
 #include "tinygl.h"
+#include "ir_uart.h"
+#include "create_message.h"
+#include "displayMessage.h"
 
-// message length default as 5
-char send_message(int message_length)
+/** Sends the given message over IR */
+void send_message(void)
 {
-    // local variable
-    char motion = 0; // variable to get player's motion
-    int count_sent; // count how many letters sent
-    int flag = 0; // to controll while loop
-    char is_success;
+    char message[7];
+    create_message(message);
+    display_scrolling_message("D");
+    ir_uart_puts(message);
+    ir_uart_putc('\0');
+}
 
-
-
-    // Display starting massage
-    tinygl_text("  SEND MESSAGE:  ");
-
-
-    //after full message is sent, break loop
-    while(flag != 1) {
-        pacer_wait ();
-        tinygl_update();
-        motion = nav_motion();
-
-        //send message to opponent
-        if(motion != 0 && count_sent < message_length && ir_uart_write_ready_p()) {
-            ir_uart_putc(motion);
-            count_sent++;
-        }
-
-        if(count_sent >= message_length) {
-            flag = 1;
-        }
+void give_go_ahead(int result) {
+    if (result == 1) {
+        ir_uart_putc('1');
+    } else {
+        ir_uart_putc('0');
     }
-
-
-
-
-    tinygl_text(" wating to complete ");
-
-
-    flag = 0;
-    // wait opponent to complete and check
-    while (flag != 1) {
-        pacer_wait ();
-        tinygl_update ();
-
-        if (ir_uart_read_ready_p()) {
-            is_success = ir_uart_getc(); // receive check result from receive_message, Y or N
-            flag = 1;
-        }
-    }
-
-
-    return is_success;
-
-
-
 }
 
 

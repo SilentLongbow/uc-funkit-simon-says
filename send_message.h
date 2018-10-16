@@ -10,6 +10,8 @@
 #include "system.h"
 
 
-char send_message(int message_length);
+void send_message(void);
+
+void give_go_ahead(int result);
 
 #endif
