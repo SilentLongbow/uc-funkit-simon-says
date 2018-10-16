@@ -14,7 +14,7 @@
 #include "ir_uart.h"
 #include "../fonts/font5x7_1.h"
 
-#define PACER_RATE 2000
+#define PACER_RATE 500
 #define MESSAGE_RATE 20
 #define DISPLAY_COUNT 1000
 #define MAX_FAIL_TIMES 3
@@ -176,7 +176,7 @@ void finish_screen(int my_fail, int opponent_fail)
 
 
 // play the game
-
+/*
 int main (void)
 {
     
@@ -205,4 +205,56 @@ int main (void)
     return 1;
 
 }
+*/
+
+// roughly create main game program
+int main(void)
+{
+    // init local varaibles
+    int message_length = MESSAGE_LENGTH;
+    int my_fail_times = 0;
+    int opponent_fail_times = 0;
+    int finish_game = 0;
+    int mode = 0;
+    char is_success;
+
+    // init system
+    system_initialise();
+
+    // play game
+    while(1) {
+        mode = start_screen();
+
+        while(finish_game != 1) {
+            if(mode == 1) {
+                is_success = send_message(message_length);
+                if (is_success == 'N') {
+                    opponent_fail_times += 1;
+                }
+                mode = 2;
+            } else if (mode == 2) {
+                success = recieve_message(message_length);
+                if (is_success == 'N') {
+                    my_fail_times += 1;
+                }
+                mode = 1;
+            }
+            
+            if (my_fail_times == MAX_FAIL_TIMES || opponent_fail_times == MAX_FAIL_TIMES) {
+                finish_game = 1;
+            } 
+        }
+        finish_screen(my_fail_times, opponent_fail_times);
+    }
+    return 1;
+
+
+}
+
+
+
+
+
+
+
 
