@@ -18,8 +18,20 @@ all: game.out
 # Compile: create object files from C source files.
 game.o: game.c ../../drivers/avr/system.h
 	$(CC) -c $(CFLAGS) $< -o $@
-	
+
 displayMessage.o: displayMessage.c ../../drivers/avr/system.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+create_message.o: create_message.c ../../drivers/avr/system.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+nav_motion.o: nav_motion.c ../../drivers/avr/system.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+receive_message.o: receive_message.c ../../drivers/avr/system.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+send_message.o: send_message.c ../../drivers/avr/system.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 pio.o: ../../drivers/avr/pio.c ../../drivers/avr/pio.h ../../drivers/avr/system.h
@@ -68,7 +80,7 @@ font.o: ../../utils/font.c ../../drivers/avr/system.h ../../utils/font.h
 
 
 # Link: create ELF output file from object files.
-game.out: game.o pio.o system.o timer.o pacer.o led.o navswitch.o ir_uart.o tinygl.o timer0.o usart1.o display.o ledmat.o prescale.o font.o displayMessage.o
+game.out: game.o pio.o system.o timer.o pacer.o led.o navswitch.o ir_uart.o tinygl.o timer0.o usart1.o display.o ledmat.o prescale.o font.o displayMessage.o create_message.o send_message.o receive_message.o nav_motion.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
