@@ -139,18 +139,16 @@ void  blue_led_off(void)
 
 
 // play the game
+
 int main (void)
 {
     system_initialise();
-    //display_character('y');
-    
-    
-    //display_scrolling_message("Hi");
-    
-    
+    blue_led_off();
+    display_character('X');
     while (1) {
-        
-        
+        pacer_wait ();
+        tinygl_update();
     }
     return 1;
 }
+

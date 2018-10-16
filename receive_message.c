@@ -7,7 +7,7 @@
 #include "pacer.h"
 #include "led.h"
 #include "tinygl.h"
-#include "tool.h"
+#include "ir_uart.h"
 
 
 
@@ -54,19 +54,19 @@ char receive_message(int message_length)
         tinygl_update ();
 
 
-        if (pattern[i] == 'N') {
+        if (message[i] == 'N') {
             tinygl_text(" N \0");
         }
-        if (pattern[i] == 'E') {
+        if (message[i] == 'E') {
             tinygl_text(" E \0");
         }
-        if (pattern[i] == 'S') {
+        if (message[i] == 'S') {
             tinygl_text(" S \0");
         }
-        if (pattern[i] == 'W') {
+        if (message[i] == 'W') {
             tinygl_text(" W \0");
         }
-        if (pattern[i] == 'P') {
+        if (message[i] == 'P') {
             tinygl_text(" P \0");
         }
         i++;
