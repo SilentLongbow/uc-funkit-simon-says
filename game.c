@@ -88,6 +88,7 @@ int start_screen(void)
     int player_mode = 0;
     int counter = 1000;
     int flag = 0;
+    char character = 0;
 
     // keep display message before push nav_switch
     while(flag != 1) {
@@ -107,7 +108,27 @@ int start_screen(void)
         tinygl_update();
 
         // push to be first player(send message)
-        if(navswitch_push_event_p(NAVSWITCH_NORTH)) {
+        if (ir_uart_read_ready_p()) {
+            character = ir_uart_getc();
+            if (character == 'p') {
+                player_mode = 2; // receive
+                blue_led_off();
+                flag = 1;
+            }
+            
+        }
+        
+        if(navswitch_push_event_p(NAVSWITCH_PUSH)) {
+            player_mode = 1; // first player
+            ir_uart_putc('P');
+            blue_led_off();
+            flag = 1;
+        }
+        
+        
+        
+        
+        /*if(navswitch_push_event_p(NAVSWITCH_NORTH)) {
             player_mode = 1;
             blue_led_off();
             flag = 1;
@@ -116,7 +137,7 @@ int start_screen(void)
             player_mode = 2;
             flag = 1;
             blue_led_off();
-        }
+        }*/
     }
     
     tinygl_clear();
@@ -124,6 +145,8 @@ int start_screen(void)
     return player_mode;
     
 }
+
+
 
 
 // display result of the game;
@@ -165,19 +188,19 @@ int main (void)
     //display_character('X');
     //display_scrolling_message("HELLO");
 
-    tinygl_text("CHOOSE FIRST PLAYER");
+    //tinygl_text("CHOOSE FIRST PLAYER");
     while (1) {
 
         
         tinygl_update();
-        int mode = start_screen();
+        //int mode = start_screen();
         
         //my_fail = 3;
         //opponent_fail = 2;
         
         pacer_wait ();
-        tinygl_update();
-        //finish_screen(my_fail, opponent_fail);
+        //tinygl_update();
+        finish_screen(4, 1);
     }
     return 1;
 
