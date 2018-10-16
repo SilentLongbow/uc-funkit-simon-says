@@ -12,7 +12,9 @@
 #include "pio.h"
 
 /** Displays a directional arrow across the display from left to right */
-void display_arrow(const char direction);
+void display_arrow_scrolling(const char direction);
+
+void display_arrow_still(const char direction);
 
 /** Displays a scrolling message on the display */
 void display_scrolling_message(char message[]);
