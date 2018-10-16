@@ -128,7 +128,6 @@ int main (void)
     while (1) {
         pacer_wait ();
         tinygl_update();
-
     }
     return 1;
 }
