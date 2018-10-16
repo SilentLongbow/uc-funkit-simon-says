@@ -8,7 +8,6 @@
 #include "pacer.h"
 #include "led.h"
 #include "tinygl.h"
-#include "tool.h"
 
 // message length default as 5
 char send_message(int message_length)
