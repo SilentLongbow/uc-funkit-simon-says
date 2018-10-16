@@ -14,7 +14,7 @@
 #include "ir_uart.h"
 #include "../fonts/font5x7_1.h"
 
-#define PACER_RATE 500
+#define PACER_RATE 2000
 #define MESSAGE_RATE 10
 
 /** Define PIO pins driving LED matrix rows.  */
@@ -43,24 +43,12 @@ void system_initialise(void)
 
     ir_uart_init(); //IR initialiser
 
-    // Initialise the tinygl system
-    tinygl_init (PACER_RATE);
-    tinygl_font_set (&font5x7_1);
-    tinygl_text_speed_set (MESSAGE_RATE);
-    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
 
     //LED matrix initialiser
     message_display_init(rows, cols);
 
     led_init ();    //LED initialiser
 }
-
-/*dicide which player send message first*/
-/*
-int decide_first_player(void)
-{
-}
-* */
 
 /** Turns on the blue LED when called */
 void blue_led_on(void)
@@ -78,10 +66,9 @@ void  blue_led_off(void)
 int main (void)
 {
     system_initialise();
-    //display_character('y');
-    display_scrolling_message("Hi");
-    blue_led_off();
+    display_character('X');
     while (1) {
+        pacer_wait ();
         tinygl_update();
     }
     return 1;
