@@ -4,7 +4,7 @@
  */
 
 
-
+#include <stdio.h>
 #include "system.h"
 #include "displayMessage.h"
 #include "pacer.h"
@@ -16,6 +16,8 @@
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
+#define DISPLAY_COUNT 6000
+#define MAX_FAil 3
 
 /** Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] = {
@@ -55,12 +57,62 @@ void system_initialise(void)
     led_init ();    //LED initialiser
 }
 
-/*dicide which player send message first*/
-/*
-int decide_first_player(void)
+/*dicide which player send message first
+ * return mode(1 or 2) 1 for send, 2
+ * for receive
+ */
+int start_screen(void)
 {
+    int text_state = 0;
+    int player_mode = 0;
+    int counter = 0;
+    // keep display message before push nav_switch
+    while(player_mode == 0) {
+        //led_set(LED1, 1);
+        
+        if (counter >= DISPLAY_COUNT) {
+            
+            if (text_state == 0) {
+                tinygl_text("    CHOOSE START MODE   \0");
+            }
+            if (text_state == 1) {
+                tinygl_text(" N FOR SEND S FOR RECIEVE  \0");
+            }
+            
+            text_state = !text_state;
+            counter = 0;
+        }
+        
+        pacer_wait();
+        navswitch_update();
+        tinygl_update();
+
+        // push north to be first player(send message)
+        if(navswitch_push_event_p(NAVSWITCH_NORTH)) {
+            player_mode = 1;
+        }
+        if(navswitch_push_event_p(NAVSWITCH_SOUTH)) {
+            player_mode = 2;
+        }
+    }
+    
+    tinygl_clear();
+    tinygl_update();
+    return player_mode;
 }
-* */
+
+
+/*
+void finish_screen(my_fail, opponent_fail)
+{
+    if (my_fail == MAX_FAil) {
+        MAX_FAil 
+    }
+
+}
+ 
+ */
+
 
 /** Turns on the blue LED when called */
 void blue_led_on(void)
@@ -74,15 +126,24 @@ void  blue_led_off(void)
     led_set(LED1, 0);
 }
 
+
+
+
+
+
 // play the game
 int main (void)
 {
     system_initialise();
     //display_character('y');
-    display_scrolling_message("Hi");
-    blue_led_off();
+    
+    
+    //display_scrolling_message("Hi");
+    
+    
     while (1) {
-        tinygl_update();
+        
+        
     }
     return 1;
 }
