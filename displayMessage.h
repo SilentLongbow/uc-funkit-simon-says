@@ -11,13 +11,8 @@
 #include "system.h"
 #include "pio.h"
 
-static const uint8_t up_arrow[];
-
-static const uint8_t down_arrow[];
-
-static const uint8_t left_arrow[];
-
-static const uint8_t right_arrow[];
+/** Displays a directional arrow across the display from left to right */
+void display_arrow(const char direction);
 
 /** Displays a scrolling message on the display */
 void display_scrolling_message(char message[]);
