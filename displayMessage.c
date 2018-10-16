@@ -44,22 +44,22 @@ int evaluate_lengths(char message[], char buffer[])
 }
 
 /** Displays a single message of at most 10 characters, once */
-void display_scrolling_message(char message[])
+void display_scrolling_message(const char message[])
 {
-    int counter = 0;
-    char buffer[11] = "0";
-    //strncpy(message, buffer, 10);
+    pacer_init(500);
+    int message_tick = 0;
+    char buffer[11] = "";
+    strncpy(buffer, message, 10);
     buffer[10] = '\0';
-    //int display_length = evaluate_lengths(message, buffer) + 2;
-
-    //double duration = (1 / (MESSAGE_RATE / 10.0)) * display_length;   // Get how many seconds are needed to display message
-    //int tick_target = duration / (1 / (double) PACER_RATE);    // Divide duration by pacer period to get ticks
+    int message_length = strlen(buffer);
+    double duration = (1 / (MESSAGE_RATE / 10.0)) * (message_length + (0.2 * message_length));   // Get how many seconds are needed to display message
+    int tick_target = duration * PACER_RATE;    // Multiply by pacer frequency to get number of ticks needed
     tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
-    tinygl_text("Hello");
-    while (counter <= 5000) {
+    tinygl_text(buffer);
+    while (message_tick < tick_target) {
         pacer_wait();
         tinygl_update();
-        counter++;
+        message_tick++;
     }
     tinygl_clear();
 }
@@ -89,4 +89,8 @@ void message_display_init(const pio_t rows[], const pio_t cols[])
     for (i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
+    // Initialise the tinygl system
+    tinygl_init (PACER_RATE);
+    tinygl_font_set (&font5x7_1);
+    tinygl_text_speed_set (MESSAGE_RATE);
 }
