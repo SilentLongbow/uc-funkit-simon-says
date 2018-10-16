@@ -8,18 +8,21 @@
 #include "system.h"
 #include "displayMessage.h"
 #include "create_message.h"
+#include "receive_message.h"
+#include "send_message.h"
 #include "pacer.h"
 #include "led.h"
 #include "navswitch.h"
 #include "tinygl.h"
 #include "ir_uart.h"
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
 #include "../fonts/font5x7_1.h"
 
 #define PACER_RATE 1000
 #define MESSAGE_RATE 15
-#define DISPLAY_COUNT 1000
 #define MAX_FAIL_TIMES 3
-#define MESSAGE_LENGTH 10
 
 /** Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] = {
@@ -86,88 +89,52 @@ int start_screen(void)
 {
 
     int player_mode = 0;
-    int counter = 1000;
     int flag = 0;
     char character = 0;
-
     // keep display message before push nav_switch
     while(flag != 1) {
         blue_led_on();
-
-        tinygl_update();
-
-        if (counter >= DISPLAY_COUNT) {
-            tinygl_text("N FOR SEND S FOR RECIEVE");
-            //tinygl_text("N FOR SEND S FOR RECIEVE  \0");
-            counter = 0;
-        }
-
         pacer_wait();
         navswitch_update();
-        tinygl_update();
-
         // push to be first player(send message)
         if (ir_uart_read_ready_p()) {
             character = ir_uart_getc();
-            if (character == 'p') {
+            if (character == 'P') {
                 player_mode = 2; // receive
                 blue_led_off();
                 flag = 1;
             }
-
         }
-
         if(navswitch_push_event_p(NAVSWITCH_PUSH)) {
             player_mode = 1; // first player
             ir_uart_putc('P');
             blue_led_off();
             flag = 1;
         }
-
-
-
-
-        /*if(navswitch_push_event_p(NAVSWITCH_NORTH)) {
-            player_mode = 1;
-            blue_led_off();
-            flag = 1;
-        }
-        if(navswitch_push_event_p(NAVSWITCH_SOUTH)) {
-            player_mode = 2;
-            flag = 1;
-            blue_led_off();
-        }*/
     }
-
-    tinygl_clear();
-    tinygl_update();
     return player_mode;
 
 }
 
-
-
-
-// display result of the game;
-void finish_screen(int my_fail, int opponent_fail)
+void post_round(int role, int result, int* my_score, int* opponent_score)
 {
-
-    if (my_fail >= MAX_FAIL_TIMES) {
-        tinygl_text("YOU LOST");
-    }
-    if (opponent_fail >= MAX_FAIL_TIMES) {
-        tinygl_text("YOU WON ");
-    }
-    //DISPLAY FINISH MESSGAE
-    while (1)
-    {
-        pacer_wait();
-        tinygl_update();
+    blue_led_on();
+    if (result == 1) {
+        if (role == 1) {
+            display_character('X');
+            *opponent_score += 1;
+        } else {
+            display_character('Y');
+            *my_score += 1;
+        }
+    } else {
+        if (role == 1) {
+            display_character('Y');
+        } else {
+            display_character('X');
+        }
     }
 }
-
-
-
 
 // play the game
 int main (void)
@@ -177,25 +144,54 @@ int main (void)
     //int opponent_fail;
 
     system_initialise();
-    blue_led_on();
-    //display_character('X');
+    blue_led_off();
     //display_scrolling_message("MATTHEW");
-    char message[7];
-    create_initial_message(message);
+    //display_character('X');
+    int winning_score = 3;
     int i = 0;
-    for (i; i < 6; i++) {
-        display_arrow_scrolling(message[i]);
+    int my_score = 0;
+    int opponent_score = 0;
+    int role;
+    char message[7];
+    role = start_screen();
+    while (my_score < winning_score && opponent_score < winning_score) {
+        int result = 0;
+        if (role == 1) {
+            display_character('1');
+            send_message();
+            result = wait_for_other();
+        } else {
+            char attempt[7] = {'\0'};
+            display_character('2');
+            receive_message(message);
+            while (message[i] != '\0') {
+                pacer_wait();
+                display_arrow_scrolling(message[i]);
+                i++;
+            }
+            // Try copy original
+            create_message(attempt);
+            if (strncmp(attempt, message, 6) == 0) {
+                display_scrolling_message("YES");
+                result = 1;
+            } else {
+                display_scrolling_message("NO");
+            }
+            give_go_ahead(result);
+        }
+        post_round(role, result, &my_score, &opponent_score);
+        if (opponent_score == winning_score) {
+            display_character('L');
+        } else if (my_score == winning_score) {
+            display_character('W');
+        }
+        if (role == 1) {
+            role = 2;
+        } else {
+            role = 1;
+        }
     }
-    //display_arrow_still('S');
-
-    //tinygl_draw_line(tinygl_point (2, 0), tinygl_point(2, 6), 1);
-    //display_arrow_scrolling('N');
-    //display_arrow_scrolling('E');
-    //display_arrow_scrolling('S');
-    //display_arrow_scrolling('W');
-    while (1) {
-        pacer_wait();
-    }
+    display_scrolling_message("GOODBYE");
     return 1;
 
 
