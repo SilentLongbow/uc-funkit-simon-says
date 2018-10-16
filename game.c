@@ -13,13 +13,13 @@
 #include "navswitch.h"
 #include "tinygl.h"
 #include "ir_uart.h"
-#include <stdbool.h>
 #include "../fonts/font5x7_1.h"
 
 #define PACER_RATE 1000
 #define MESSAGE_RATE 15
-#define DISPLAY_COUNT 6000
+#define DISPLAY_COUNT 1000
 #define MAX_FAIL_TIMES 3
+#define MESSAGE_LENGTH 10
 
 /** Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] = {
@@ -58,69 +58,6 @@ void system_initialise(void)
     led_init ();    //LED initialiser
 }
 
-/*dicide which player send message first
- * return mode(1 or 2) 1 for send, 2
- * for receive
- */
-int start_screen(void)
-{
-    int text_state = 0;
-    int player_mode = 0;
-    int counter = 0;
-    // keep display message before push nav_switch
-    while(player_mode == 0) {
-        //led_set(LED1, 1);
-
-        if (counter >= DISPLAY_COUNT) {
-
-            if (text_state == 0) {
-                tinygl_text("    CHOOSE START MODE   \0");
-            }
-            if (text_state == 1) {
-                tinygl_text(" N FOR SEND S FOR RECIEVE  \0");
-            }
-
-            text_state = !text_state;
-            counter = 0;
-        }
-
-        pacer_wait();
-        navswitch_update();
-        tinygl_update();
-
-        // push north to be first player(send message)
-        if(navswitch_push_event_p(NAVSWITCH_NORTH)) {
-            player_mode = 1;
-        }
-        if(navswitch_push_event_p(NAVSWITCH_SOUTH)) {
-            player_mode = 2;
-        }
-    }
-
-    tinygl_clear();
-    tinygl_update();
-    return player_mode;
-}
-
-
-// display result of the game;
-void finish_screen(bool my_fail, bool opponent_fail)
-{
-    if (my_fail == MAX_FAIL_TIMES) {
-        tinygl_text(" YOU LOST   \0");
-    }
-    if (opponent_fail == MAX_FAIL_TIMES) {
-        tinygl_text(" YOU WON   \0");
-    }
-    //DISPLAY FINISH MESSGAE
-    while (1)
-    {
-        pacer_wait();
-        tinygl_update();
-    }
-}
-
-
 
 /** Turns on the blue LED when called */
 void blue_led_on(void)
@@ -134,9 +71,111 @@ void  blue_led_off(void)
     led_set(LED1, 0);
 }
 
+
+
+
+
+
+
+
+/*dicide which player send message first
+ * return mode(1 or 2) 1 for send, 2
+ * for receive
+ */
+int start_screen(void)
+{
+
+    int player_mode = 0;
+    int counter = 1000;
+    int flag = 0;
+    char character = 0;
+
+    // keep display message before push nav_switch
+    while(flag != 1) {
+        blue_led_on();
+
+        tinygl_update();
+
+        if (counter >= DISPLAY_COUNT) {
+            tinygl_text("N FOR SEND S FOR RECIEVE");
+            //tinygl_text("N FOR SEND S FOR RECIEVE  \0");
+            counter = 0;
+        }
+
+        pacer_wait();
+        navswitch_update();
+        tinygl_update();
+
+        // push to be first player(send message)
+        if (ir_uart_read_ready_p()) {
+            character = ir_uart_getc();
+            if (character == 'p') {
+                player_mode = 2; // receive
+                blue_led_off();
+                flag = 1;
+            }
+
+        }
+
+        if(navswitch_push_event_p(NAVSWITCH_PUSH)) {
+            player_mode = 1; // first player
+            ir_uart_putc('P');
+            blue_led_off();
+            flag = 1;
+        }
+
+
+
+
+        /*if(navswitch_push_event_p(NAVSWITCH_NORTH)) {
+            player_mode = 1;
+            blue_led_off();
+            flag = 1;
+        }
+        if(navswitch_push_event_p(NAVSWITCH_SOUTH)) {
+            player_mode = 2;
+            flag = 1;
+            blue_led_off();
+        }*/
+    }
+
+    tinygl_clear();
+    tinygl_update();
+    return player_mode;
+
+}
+
+
+
+
+// display result of the game;
+void finish_screen(int my_fail, int opponent_fail)
+{
+
+    if (my_fail >= MAX_FAIL_TIMES) {
+        tinygl_text("YOU LOST");
+    }
+    if (opponent_fail >= MAX_FAIL_TIMES) {
+        tinygl_text("YOU WON ");
+    }
+    //DISPLAY FINISH MESSGAE
+    while (1)
+    {
+        pacer_wait();
+        tinygl_update();
+    }
+}
+
+
+
+
 // play the game
 int main (void)
 {
+
+    //int my_fail;
+    //int opponent_fail;
+
     system_initialise();
     blue_led_on();
     //display_character('X');
@@ -158,5 +197,14 @@ int main (void)
         pacer_wait();
     }
     return 1;
+
+
 }
+
+
+
+
+
+
+
 
