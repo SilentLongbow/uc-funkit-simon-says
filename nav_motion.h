@@ -1,6 +1,8 @@
-/**  @file   displayMessage.h
-     @author Siyuan Wei
-     @ header file of nav_motion.c
+/**  @file   nav_motion.h
+     @author Matthew Kenny (ID: 11031880)
+     @author Siyuan Wei (ID: 22883373)
+     @date   16 Oct 2018
+     @brief  Detects user input through the nav-switch
 */
 
 

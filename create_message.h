@@ -1,7 +1,8 @@
 /**  @file   create_message.h
-     @author Matthew Kenny
+     @author Matthew Kenny (ID: 11031880)
+     @author Siyuan Wei (ID: 22883373)
      @date   16 Oct 2018
-     @brief  Creating the message through the navbutton
+     @brief  Creating the message through the nav-switch
 */
 
 #ifndef CREATE_MESSAGE_H

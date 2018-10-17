@@ -1,3 +1,8 @@
+/* Author: Siyuan WEI(ID: 022883373)
+ *         Matthew Kenny(ID: 11031880)
+ * Description: Creates the message to be sent.
+ */
+
 #include "system.h"
 #include "displayMessage.h"
 #include "pacer.h"

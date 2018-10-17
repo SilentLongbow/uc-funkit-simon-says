@@ -1,6 +1,7 @@
 /* Author: Siyuan WEI(ID:22883373)
+ *         Matthew Kenny (ID: 11031880)
  *
- * describle: record players motion
+ * Description: Records players motion through the nav-switch
  */
 
 

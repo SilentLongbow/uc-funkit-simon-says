@@ -1,4 +1,5 @@
 /* Author: Matthew Kenny(ID: 11031880)
+           Siyuan Wei (ID: 22883373)
  *
  * Description: Handles all actions regarding displaying messages
  *              to the LED matrix.

@@ -1,5 +1,6 @@
 /**  @file   displayMessage.h
-     @author Matthew Kenny
+     @author Matthew Kenny (ID: 11031880)
+     @author Siyuan Wei (ID: 22883373)
      @date   16 Oct 2018
      @brief  Visualising information on the display.
 */

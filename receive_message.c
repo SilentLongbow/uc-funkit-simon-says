@@ -1,5 +1,6 @@
-/* Author: Siyuan WEI(ID: 022883373)
- * Description: receive and check message, called by game.c
+/* Author: Siyuan Wei(ID: 022883373)
+ *         Matthew Kenny (ID: 11031880)
+ * Description: receive a message through serial communication
  */
 
 #include <stdio.h>
