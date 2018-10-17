@@ -1,5 +1,6 @@
 # File:   Makefile
-# Author: Matthew Kenny: 11031880
+# Author: Matthew Kenny (ID: 11031880)
+#		  Siyuan Wei (ID: 22883373)
 # Date:   10 Oct 2018
 # Descr:  Makefile for game
 
