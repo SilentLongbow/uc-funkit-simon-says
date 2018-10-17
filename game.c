@@ -130,9 +130,20 @@ void post_round(int role, int result, int* my_score, int* opponent_score)
     } else {
         if (role == 1) {
             display_character('Y');
+            *my_score += 1;
         } else {
             display_character('X');
+            *opponent_score += 1;
         }
+    }
+}
+
+void display_victory(int* my_score)
+{
+    if (*my_score >= 3) {
+        display_scrolling_message("WINNER");
+    } else {
+        display_scrolling_message("LOSER");
     }
 }
 
@@ -148,23 +159,25 @@ int main (void)
     //display_scrolling_message("MATTHEW");
     //display_character('X');
     int winning_score = 3;
-    int i = 0;
     int my_score = 0;
     int opponent_score = 0;
     int role;
-    char message[7];
     role = start_screen();
     while (my_score < winning_score && opponent_score < winning_score) {
+        pacer_wait();
         int result = 0;
+        char message[7] = {'\0'};
         if (role == 1) {
-            display_character('1');
+            display_character('S');
             send_message();
             result = wait_for_other();
         } else {
             char attempt[7] = {'\0'};
-            display_character('2');
+            display_character('R');
             receive_message(message);
-            while (message[i] != '\0') {
+            int i = 0;
+            int length = strlen(message);
+            while (i < length) {
                 pacer_wait();
                 display_arrow_scrolling(message[i]);
                 i++;
@@ -180,21 +193,14 @@ int main (void)
             give_go_ahead(result);
         }
         post_round(role, result, &my_score, &opponent_score);
-        if (opponent_score == winning_score) {
-            display_character('L');
-        } else if (my_score == winning_score) {
-            display_character('W');
-        }
         if (role == 1) {
             role = 2;
         } else {
             role = 1;
         }
     }
-    display_scrolling_message("GOODBYE");
+    display_victory(&my_score);
     return 1;
-
-
 }
 
 

@@ -12,7 +12,9 @@
 
 
 
-void receive_message(char message[7]);
+void receive_message(char message[]);
+
+void clear_buffer(void);
 
 int wait_for_other(void);
 

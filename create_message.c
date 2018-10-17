@@ -13,11 +13,11 @@ void create_message(char message[])
         input = nav_motion();
         if (input != 0 && input != 'P' && index <= 5) {
             message[index] = input;
-            message[index + 1] = '\0';
             display_arrow_still(message[index]);
             index++;
         } else if (input != 0 && input != 'P' && index == 6) {
             display_character('X');
         }
     }
+    message[index] = '\0';
 }

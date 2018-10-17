@@ -5,6 +5,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include "system.h"
 #include "pacer.h"
 #include "led.h"
@@ -18,9 +19,17 @@ void send_message(void)
 {
     char message[7];
     create_message(message);
-    display_scrolling_message("D");
-    ir_uart_puts(message);
-    ir_uart_putc('\0');
+    display_scrolling_message("SND");
+    int length = strlen(message);
+    int i = 0;
+    for (i; i <= length; i++) {
+        int counter = 0;
+        while (counter < 700) {
+            pacer_wait();
+            counter++;
+        }
+        ir_uart_putc(message[i]);
+    }
 }
 
 void give_go_ahead(int result) {

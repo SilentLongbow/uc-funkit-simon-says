@@ -16,7 +16,7 @@
 void receive_message(char message[])
 {
     led_set(LED1, 1);
-    char received[2] = " ";
+    char received[2] = {1, '\0'};
     char expected[7] = "NSEW10";
     int index = 0;
     while (received[0] != '\0' && index < 6) {
@@ -27,11 +27,13 @@ void receive_message(char message[])
                 message[index] = received[0];
                 index++;
             }
-
+        } else {
+            display_scrolling_message("...");
         }
-
     }
-    message[6] = '\0';
+    int length = strlen(message);
+    display_character(65+length);
+    message[index+1] = '\0';
     led_set(LED1, 0);
 }
 
@@ -42,6 +44,8 @@ int wait_for_other(void) {
         pacer_wait();
         if (ir_uart_read_ready_p()) {
             character=ir_uart_getc();
+        } else {
+            display_scrolling_message("...");
         }
     }
     int result;
