@@ -6,12 +6,12 @@
  */
 
 #include <string.h>
+#include "displayMessage.h"
 #include "system.h"
 #include "pio.h"
 #include "tinygl.h"
 #include "pacer.h"
 #include "../fonts/font5x7_1.h"
-#include "led.h"
 
 #define PACER_RATE 1000
 #define MESSAGE_RATE 15
@@ -150,6 +150,7 @@ void display_character(const char character)
     tinygl_update();
 }
 
+/** The initialisation of the LED matrix and tinygl */
 void message_display_init(const pio_t rows[], const pio_t cols[])
 {
     //LED matrix initialiser

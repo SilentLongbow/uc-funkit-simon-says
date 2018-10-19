@@ -3,6 +3,7 @@
  * Description: Creates the message to be sent.
  */
 
+#include "create_message.h"
 #include "system.h"
 #include "displayMessage.h"
 #include "pacer.h"

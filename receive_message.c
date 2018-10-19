@@ -3,20 +3,16 @@
  * Description: receive a message through serial communication
  */
 
-#include <stdio.h>
 #include <string.h>
+#include "receive_message.h"
 #include "system.h"
 #include "pacer.h"
-#include "led.h"
-#include "tinygl.h"
 #include "ir_uart.h"
-
 #include "displayMessage.h"
 
-
+/** The receiver's method of receiving the message created by the sender */
 void receive_message(char message[])
 {
-    led_set(LED1, 1);
     char received[2] = {1, '\0'};
     char expected[7] = "NSEW10";
     int index = 0;
@@ -32,16 +28,13 @@ void receive_message(char message[])
             display_scrolling_message("...");
         }
     }
-    int length = strlen(message);
-    display_character(65+length);
-    message[index+1] = '\0';
-    led_set(LED1, 0);
+    message[index+1] = '\0';    // End the message with a string terminator
 }
 
+/** Wait for the receiver to finish their actions */
 int wait_for_other(void) {
     char character = '\0';
-    led_set(LED1, 1);
-    while (character != '1' && character != '0') {
+    while (character != '1' && character != '0') {  // Wait until a go-ahead message is received
         pacer_wait();
         if (ir_uart_read_ready_p()) {
             character=ir_uart_getc();
@@ -49,13 +42,13 @@ int wait_for_other(void) {
             display_scrolling_message("...");
         }
     }
+    // See what the result of the receiver's task was
     int result;
     if (character == '1') {
         result = 1;
     } else {
         result = 0;
     }
-    led_set(LED1, 0);
     return result;
 }
 

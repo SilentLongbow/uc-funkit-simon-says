@@ -11,9 +11,10 @@
 
 #include "system.h"
 
-
+/** Send the message made by the sender, to the receiver */
 void send_message(void);
 
+/** The inform the sender that the receiver has completed their tasks */
 void give_go_ahead(int result);
 
 #endif

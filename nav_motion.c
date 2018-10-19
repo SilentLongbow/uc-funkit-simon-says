@@ -3,11 +3,8 @@
  *
  * Description: Records players motion through the nav-switch
  */
-
-
-
-
-#include <stdio.h>
+ 
+#include "nav_motion.h"
 #include "system.h"
 #include "navswitch.h"
 

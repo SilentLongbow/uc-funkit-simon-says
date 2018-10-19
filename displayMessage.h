@@ -18,7 +18,7 @@ void display_arrow_scrolling(const char direction);
 void display_arrow_still(const char direction);
 
 /** Displays a scrolling message on the display */
-void display_scrolling_message(char message[]);
+void display_scrolling_message(const char message[]);
 
 /** Displays a single character on the display */
 void display_character(const char character);

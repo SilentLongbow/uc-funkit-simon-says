@@ -3,13 +3,10 @@
  * Description: set message, called by game.c
  */
 
-
-#include <stdio.h>
 #include <string.h>
+#include "send_message.h"
 #include "system.h"
 #include "pacer.h"
-#include "led.h"
-#include "tinygl.h"
 #include "ir_uart.h"
 #include "create_message.h"
 #include "displayMessage.h"
@@ -21,8 +18,8 @@ void send_message(void)
     create_message(message);
     display_scrolling_message("SND");
     int length = strlen(message);
-    int i = 0;
-    for (i; i <= length; i++) {
+    int i;
+    for (i = 0; i <= length; i++) {
         int counter = 0;
         while (counter < 700) {
             pacer_wait();
@@ -32,6 +29,9 @@ void send_message(void)
     }
 }
 
+/** Sends a byte to the waiting sender letting them know the reciver has finished
+ *  their task. Byte contains the result of the receiver's actions.
+ */
 void give_go_ahead(int result) {
     if (result == 1) {
         ir_uart_putc('1');

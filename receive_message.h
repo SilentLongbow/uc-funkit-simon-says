@@ -12,12 +12,10 @@
 
 #include "system.h"
 
-
-
+/** Wait until the sender has created and set their message, then receive & parse it */
 void receive_message(char message[]);
 
-void clear_buffer(void);
-
+/** The sender waits for the receiver to finish their tasks */
 int wait_for_other(void);
 
 #endif
